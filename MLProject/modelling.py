@@ -1,19 +1,19 @@
 import pandas as pd
 import mlflow
 import mlflow.sklearn
-import dagshub
 import os
 from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import accuracy_score
 
 # ==========================================
-# 1. ISI BAGIAN INI DENGAN DATA DAGSHUB ANDA
+# 1. SETUP MLFLOW (Manual Configuration)
+# ==========================================
 print("Mengatur MLflow Tracking URI...")
-# Pastikan URL ini sesuai dengan link DagsHub eksperimen lama Anda
+
 mlflow.set_tracking_uri("https://dagshub.com/NurusSafaah/Eksperimen-Telco-Churn.mlflow")
 
-# Lanjut ke kode eksperimen...
+# Set nama eksperimen
 mlflow.set_experiment("Telco-Churn-Experiment")
 
 def load_data():
@@ -31,11 +31,7 @@ def load_data():
     return df
 
 def main():
-    # 2. Setup DagsHub & MLflow (Koneksi ke Server)
-    dagshub.init(repo_owner=DAGSHUB_USERNAME, repo_name=REPO_NAME, mlflow=True)
-    mlflow.set_experiment("Telco Churn - Basic Model")
-
-    # 3. Persiapan Data
+    # 2. Persiapan Data
     df = load_data()
     X = df.drop('Churn', axis=1)
     y = df['Churn']
@@ -43,7 +39,8 @@ def main():
     # Split data 80% Training, 20% Testing
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
-    # 4. Training Model Pakai Autolog
+    # 3. Training Model Pakai Autolog
+    
     mlflow.sklearn.autolog()
     
     with mlflow.start_run():
