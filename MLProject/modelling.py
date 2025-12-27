@@ -9,9 +9,12 @@ from sklearn.metrics import accuracy_score
 
 # ==========================================
 # 1. ISI BAGIAN INI DENGAN DATA DAGSHUB ANDA
-# ==========================================
-DAGSHUB_USERNAME = "NurusSafaah"  
-REPO_NAME = "Eksperimen-Telco-Churn"
+print("Mengatur MLflow Tracking URI...")
+# Pastikan URL ini sesuai dengan link DagsHub eksperimen lama Anda
+mlflow.set_tracking_uri("https://dagshub.com/NurusSafaah/Eksperimen-Telco-Churn.mlflow")
+
+# Lanjut ke kode eksperimen...
+mlflow.set_experiment("Telco-Churn-Experiment")
 
 def load_data():
     # 1. Load Data
