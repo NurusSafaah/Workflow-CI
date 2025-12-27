@@ -8,8 +8,13 @@ jobs:
   build-and-train:
     runs-on: ubuntu-latest
     env:
+      # Token DagsHub (Dari Secrets)
       DAGSHUB_TOKEN: ${{ secrets.DAGSHUB_TOKEN }}
-      MLFLOW_TRACKING_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+      
+      # Username DagsHub
+      MLFLOW_TRACKING_USERNAME: "NurusSafaah"
+      
+      # Password MLflow adalah Token DagsHub
       MLFLOW_TRACKING_PASSWORD: ${{ secrets.DAGSHUB_TOKEN }}
       
     steps:
@@ -28,7 +33,7 @@ jobs:
 
     - name: Run MLflow Project
       run: |
-        # Masuk ke folder MLProject lalu jalankan
+        # Jalankan project yang ada di dalam folder MLProject
         mlflow run MLProject --no-conda 
 
     - name: Login to Docker Hub
@@ -39,15 +44,23 @@ jobs:
 
     - name: Build and Push Docker Image
       run: |
+        # Setup nama image
         IMAGE_TAG=${{ secrets.DOCKER_USERNAME }}/telco-churn-project:latest
         
-        # Build image manual (Lebih stabil untuk tugas)
+        # Buat Dockerfile manual untuk membungkus hasil kerja
         echo "FROM python:3.9-slim" > Dockerfile
         echo "WORKDIR /app" >> Dockerfile
+        
+        # Copy isi folder MLProject ke dalam image
         echo "COPY MLProject/ ." >> Dockerfile
+        
+        # Install library
         echo "RUN pip install pandas scikit-learn mlflow dagshub matplotlib seaborn" >> Dockerfile
+        
+        # Perintah jalan
         echo "CMD [\"python\", \"modelling.py\"]" >> Dockerfile
         
+        # Build & Push
         docker build -t $IMAGE_TAG .
         docker push $IMAGE_TAG
         echo "✅ Sukses Push ke Docker Hub!"
